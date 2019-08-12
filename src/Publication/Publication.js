@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Publication.module.css';
 
-const Publications = ({ item }) => (
+const Publications = ({ article }) => (
   <article className={styles.publication}>
-    <h2>{item.title}</h2>
-    <p>{item.text}</p>
+    <h2>{article.title}</h2>
+    <p>{article.text}</p>
   </article>
 );
 
 Publications.propTypes = {
-  item: PropTypes.shape({
+  article: PropTypes.shape({
     title: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
   }).isRequired,

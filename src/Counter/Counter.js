@@ -5,7 +5,7 @@ import styles from './Counter.module.css';
 const Counter = ({ currentPage, totalPages }) => (
   <Fragment>
     <p className={styles.counter}>
-      {currentPage + 1}/{totalPages}
+      {currentPage}/{totalPages}
     </p>
   </Fragment>
 );

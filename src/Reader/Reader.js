@@ -8,89 +8,91 @@ import Controls from '../Controls/Controls';
 import publications from '../publications.json';
 import styles from './Reader.module.css';
 
-const queryParams = (indexCurrentPage, itemNumber) => {
-  if (indexCurrentPage) {
-    return Number(queryString.parse(indexCurrentPage).item);
-  }
-
-  return Number(itemNumber);
-};
+const queryParams = props => queryString.parse(props.location.search).item;
 
 class Reader extends Component {
   static propTypes = {
     location: PropTypes.shape({
       search: PropTypes.string.isRequired,
+      pathname: PropTypes.string.isRequired,
     }).isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired,
+      replace: PropTypes.func.isRequired,
     }).isRequired,
   };
 
   state = {
     items: publications,
-    indexCurrentPage: 0,
   };
 
   componentDidMount() {
-    const { indexCurrentPage } = this.state;
     const { history, location } = this.props;
-    const qsNumberPublication = queryParams(location.search, indexCurrentPage);
+    const { items } = this.state;
+    const indexCurrentPage = queryParams(this.props);
 
-    if (qsNumberPublication !== indexCurrentPage) {
-      this.setState({ indexCurrentPage: qsNumberPublication });
-
+    if (
+      Number(indexCurrentPage) >= 0 &&
+      Number(indexCurrentPage) < items.length
+    ) {
       history.push({
         ...location,
-        search: `?item=${qsNumberPublication}`,
+        search: `?item=${Number(indexCurrentPage)}`,
       });
-      return;
-    }
-    history.push({
-      ...location,
-      search: `?item=${indexCurrentPage}`,
-    });
+    } else
+      history.replace({
+        pathname: '/reader',
+        search: `?item=1`,
+      });
   }
 
-  handlePrev = () => {
-    const NumberParse = queryParams(this.props.location.search);
+  // componentDidUpdate(prevProps) {
+  //   const { history, location } = this.props;
+  //   const indexCurrentPage = queryParams(this.props);
 
-    this.setState({
-      indexCurrentPage: NumberParse - 1,
+  //   if (prevProps.location !== location) {
+  //     history.push({
+  //       ...location,
+  //       search: `?item=${Number(indexCurrentPage)}`,
+  //     });
+  //   }
+  // }
+
+  handlePrev = () => {
+    const { history, location } = this.props;
+    const indexCurrentPage = queryParams(this.props);
+
+    history.push({
+      ...location,
+      search: `?item=${Number(indexCurrentPage) - 1}`,
     });
   };
 
   handleNext = () => {
-    const NumberParse = queryParams(this.props.location.search);
+    const { history, location } = this.props;
+    const indexCurrentPage = queryParams(this.props);
 
-    this.setState({
-      indexCurrentPage: NumberParse + 1,
+    history.push({
+      ...location,
+      search: `?item=${Number(indexCurrentPage) + 1}`,
     });
   };
 
-  componenetDidUpdate(prevState) {
-    const { indexCurrentPage } = this.state;
-    const { history, location } = this.props;
-
-    if (queryParams(prevState.location.search) === indexCurrentPage) {
-      return;
-    }
-    history.push({
-      ...location,
-      search: `?item=${indexCurrentPage}`,
-    });
-  }
-
   render() {
-    const { indexCurrentPage, items } = this.state;
+    const { items } = this.state;
+    const indexCurrentPage = queryParams(this.props);
 
     return (
       <div className={styles.reader}>
-        <Publication item={items[indexCurrentPage]} />
-        <Counter currentPage={indexCurrentPage} totalPages={items.length} />
+        <Publication article={items[Number(indexCurrentPage)]} />
+        <Counter
+          currentPage={Number(indexCurrentPage) + 1}
+          totalPages={items.length}
+        />
         <Controls
           handlePrev={this.handlePrev}
           handleNext={this.handleNext}
-          indexCurrentPage={indexCurrentPage}
+          indexCurrentPage={Number(indexCurrentPage)}
           totalPages={items.length}
         />
       </div>
