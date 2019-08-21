@@ -26,25 +26,25 @@ class Reader extends Component {
     items: publications,
   };
 
-  componentDidMount() {
-    const { history, location } = this.props;
-    const { items } = this.state;
-    const indexCurrentPage = queryParams(this.props);
+  // componentDidMount() {
+  //   const { history, location } = this.props;
+  //   const { items } = this.state;
+  //   const indexCurrentPage = queryParams(this.props);
 
-    if (
-      Number(indexCurrentPage) >= 0 &&
-      Number(indexCurrentPage) < items.length
-    ) {
-      history.push({
-        ...location,
-        search: `?item=${Number(indexCurrentPage)}`,
-      });
-    } else
-      history.replace({
-        pathname: '/reader',
-        search: `?item=1`,
-      });
-  }
+  //   if (
+  //     Number(indexCurrentPage) > 0 &&
+  //     Number(indexCurrentPage) <= items.length
+  //   ) {
+  //     history.push({
+  //       ...location,
+  //       search: `?item=${Number(indexCurrentPage)}`,
+  //     });
+  //   } else
+  //     history.replace({
+  //       pathname: '/reader',
+  //       search: `?item=1`,
+  //     });
+  // }
 
   // componentDidUpdate(prevProps) {
   //   const { history, location } = this.props;
@@ -80,13 +80,13 @@ class Reader extends Component {
 
   render() {
     const { items } = this.state;
-    const indexCurrentPage = queryParams(this.props);
+    const indexCurrentPage = queryParams(this.props) - 1;
 
     return (
       <div className={styles.reader}>
         <Publication article={items[Number(indexCurrentPage)]} />
         <Counter
-          currentPage={Number(indexCurrentPage) + 1}
+          currentPage={Number(indexCurrentPage)}
           totalPages={items.length}
         />
         <Controls
